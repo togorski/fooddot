@@ -1,0 +1,122 @@
+html {
+    overflow-y: scroll;
+}
+body {
+    background: #a7d7c5;
+    display: flex;
+}
+
+label {
+    display: block;
+    /* margin-bottom: 10px; */
+}
+
+li {
+    list-style: none;
+    outline: none;
+}
+
+ul {
+    padding-inline-start: 0;
+}
+
+a {
+    outline: none;
+}
+
+.alert {
+    position: absolute;
+    top: 1em;
+    left: 50%;
+    transform: translate(-50%, 0);
+    display: none;
+}
+
+/* food menu */
+.container {
+    align-self: center;
+    min-width: 40%;
+    max-width: 50%;
+    margin-top: 20px;
+    /* height: 600px; */
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    justify-content: space-between;
+    /* text-align: center; */
+    background-color: white;
+    box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding-left: 0px;
+    padding-right: 0px;
+    /* overflow-block: hidden; */
+    /* padding-top: 30px;
+    padding-bottom: 30px; */
+}
+
+.container__image {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    height: 100%;
+    /* overflow: hidden; */
+    /* height: 250px;
+    width: 100px; */
+    /* flex: 1; */
+    font-weight: bold;
+    font-size: 3rem;
+    padding: 1rem;
+    padding-right: 0.5rem;
+    padding-bottom: 0.7rem;
+}
+
+
+.form {
+    /* align-content: stretch; */
+    align-items: stretch;
+    /* background-color: white;
+    border-radius: 5px; */
+    display: flex;
+    flex: 2;
+    flex-direction: column;
+    justify-content: space-between;
+    /* padding-top: 5%;
+    padding-bottom: 5%; */
+    padding: 1rem 1rem;
+    /* min-width: 200px; */
+}
+
+.form__inputs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    /* flex-grow: 1; */
+    
+    /* flex-wrap: nowrap; */
+}
+
+.btn {
+    background-color: #C33C54;
+    color: #ffffff;
+    display: block;
+    width: 100%;
+}
+
+.container-drawer-buttons {
+    margin-top: 3em;
+}
+
+@media (max-width: 768px) {
+    .container {
+        max-width: 90%;
+        flex-direction: column;
+    }
+
+    #burger {
+        max-width: 20%;
+        /* height: 200px; */
+        }
+}

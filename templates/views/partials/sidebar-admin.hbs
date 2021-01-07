@@ -1,0 +1,14 @@
+<div class="sidebar_menu">
+    <nav class="nav flex-column nav-pills">
+        <a class="nav-link sidebar-nav-link {{#if (equals page "menu")}}active{{/if}}" href="/admin/menu">Menu</a>
+        <a class="nav-link sidebar-nav-link {{#if (equals page "users")}}active{{/if}}" href="/admin/users">Users</a>
+        <a class="nav-link sidebar-nav-link" href="#">Statistics</a>
+        <a class="nav-link sidebar-nav-link" href="/kitchen" target=”_blank”>Kitchen</a>
+        <a class="nav-link sidebar-nav-link" href="/display" target=”_blank”>Display</a>
+        <a class="nav-link sidebar-nav-link" href="/menu" target=”_blank”>Client Panel</a>
+        <div>
+            <p>{{currentUser.username}}</p>
+            <a class="nav-link sidebar-nav-link" href="/logout">Log Out</a>
+        </div>
+    </nav>
+</div>

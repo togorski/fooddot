@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>POS - Login</title>
+    <script src="/js/external/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" href="/css/external/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+
+    <div class="container">
+        <div class="container__image">
+            <div>FOOD.</div>
+            <img id="burger" src="/img/hamburger-login.svg"/>
+        </div>
+        <form class="form" action="/login" method="POST" autocomplete="off">
+            <div class="form__inputs">
+                <div class="form-group">
+                    <label for="category-name-input">Username</label>
+                    <input id="category-name-input" class="form-control" type="text" placeholder="Login" name="username">
+                </div>
+                <div class="form-group">
+                    <label for="category-name-input">Password</label>
+                    <input id="category-name-input" class="form-control" type="password" placeholder="Password" name="password">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn" data-action="confirm">Log In</button>
+        </form>
+    </div>
+
+    {{#if error }}
+        <div class="alert alert-danger" role="alert">
+            {{ error }}
+        </div>
+    {{/if}}
+    <script src="/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+const express = require("express")
+const router = new express.Router()
+
+const { compareIndexes } = require("../utils")
+
+const MenuCategory = require("../models/menuCategory")
+
+router.get("/", async (req, res) => {
+    let menuItems = []
+
+    try {
+        const categories = await MenuCategory.find({})
+        categories.sort(compareIndexes)
+
+        // console.log(categories)
+        for (i=0; i < categories.length; i++){
+            let category = {}
+
+            await categories[i].populate({ path: "items" }).execPopulate()
+
+            category.show = categories[i].show
+
+            if(category.show){
+                category.items = categories[i].items
+                category.categoryName = categories[i].name
+                category.categoryId = categories[i]._id
+    
+                category.items.sort(compareIndexes)
+                menuItems.push(category)                
+            }
+        }
+        
+        res.render("menu", {menuItems, categoriesCount: categories.length})
+    } catch (e) {
+        res.status("500").send(e.message)
+    }   
+})
+
+module.exports = router

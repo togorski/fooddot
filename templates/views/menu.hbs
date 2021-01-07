@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Menu</title>
+       
+    <script src="/js/external/jquery-1.12.4.min.js"></script>
+    <script src="/js/external/jquery-ui.min.js"></script>
+    <script src="/js/external/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="/js/external/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script>
+    $( function() {
+        $( "#tabs" ).tabs();
+    } );
+    </script>
+    
+    <link rel="stylesheet" href="/css/external/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/menu.css">
+</head>
+<body>
+    <!-- modal form -->
+    <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                {{!-- <div class="modal-header">
+                    <h5 class="modal-title" id="item-modal-title-header">Your order number is</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div> --}}
+                <div class="modal-body">
+                    Your order number is
+                    <div class="order-number"></div>
+                    <div class="order-note">Please pay at the counter</div>
+                    <button id="reload-after-order" type="submit" data-dismiss="modal" class="btn btn-primary">OK</button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="initialOverlay" hidden>
+        <button id="destroy-overlay" type="submit" data-dismiss="modal" class="btn">START ORDERING</button>
+    </div>
+
+    <div class="container-all">
+        <div id="tabs" class="container">
+            <div class="tabs-nav">
+                <ul class="nav-pills sortable">
+                    {{#unless categoriesCount}}
+                        <p>No Categories</p>
+                    {{/unless}}
+                    {{#each menuItems}}
+                        {{#if this.show}}
+                            <li class="nav-item" data-categoryid="{{this.categoryId}}" data-show="{{this.show}}">
+                                <a class="nav-link" href="#{{this.categoryId}}"><span class="category-name-link">{{this.categoryName}}</span><span{{#if (not this.show)}} class="icon-hidden"{{/if}}></span></a>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+                <div class="container-drawer-buttons" hidden>
+                    <button id="save-item-order-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}}" {{#unless categoriesCount}}disabled{{/unless}}>Save Order</button>    
+                    <button id="new-item-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}} invoke-modal-button" data-toggle="modal" data-target="#itemModal" data-action="new" {{#unless categoriesCount}}disabled{{/unless}}>
+                        New Menu Item
+                    </button>
+                    <button id="save-category-order-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}}" {{#unless categoriesCount}}disabled{{/unless}}>Save Category Order</button>
+                    <button id="new-category-button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#categoryModal" data-action="new">New Category</button>
+                    <button id="edit-category-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}info{{else}}secondary{{/if}}" data-toggle="modal" data-target="#categoryModal" data-action="edit" {{#unless categoriesCount}}disabled{{/unless}}>Edit Category</button>
+                    <button id="delete-category-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}danger{{else}}secondary{{/if}}" data-toggle="modal" data-target="#deleteModal" data-action="delete" data-scope="categories" {{#unless categoriesCount}}disabled{{/unless}}>Delete Category</button>
+                </div>
+            </div>
+            <div class="container-items">
+            {{#each menuItems}}
+                <div id="{{this.categoryId}}" class="menu-category-grid" data-categoryid="{{this.categoryId}}" >
+                    {{#each this.items}}
+                        <div class="menu-item ui-state-default card" data-available={{this.available}} data-itemid={{this._id}} data-price={{this.price}} data-available={{this.available}} data-vegan={{this.vegan}} data-vegetarian={{this.vegetarian}} data-glutenFree={{this.glutenFree}}>
+                            <img src="{{this.image}}" class="card-img-top img-fluid">
+                            <div class="price-tag">
+                                <span>{{this.price}} PLN</span>
+                                <div class="display-item-available"></div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title display-item-name">{{this.name}}</h5>
+                                <p class="card-text display-item-description">{{this.description}}</p>
+                            </div>
+                            <div class="card-footer">
+                                <div class="items-diet-icons">
+                                    {{#if this.glutenFree }}<img src="/img/gf.png" class="diet-icon" data-toggle="tooltip" data-placement="top" title="Gluten-Free">{{/if}}
+                                    {{#if this.vegetarian }}<img src="/img/vegetarian.png" class="diet-icon"data-toggle="tooltip" data-placement="top" title="Vegetarian" >{{/if}}
+                                    {{#if this.vegan }}<img src="/img/vegan.png" class="diet-icon" data-toggle="tooltip" data-placement="top" title="Vegan">{{/if}}    
+                                </div>
+                                <button class="btn btn-outline-primary add-to-order" type="button" data-itemid="{{this._id}}" data-itemname="{{this.name}}" data-price="{{this.price}}">+</button>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            {{/each}}
+            </div>
+        </div>
+        <div class="sidebar_right">
+            <h1>Order:</h1>
+            <div id="order-list-area"></div>
+            <div id="total-price-area">
+                Total: 
+                <span id="display-total-price">
+                    <span id="total-price-sum">0</span>
+                    <span id="total-price-currency">PLN</span>
+                </span>
+            </div>
+            <button id="submit-order-button" type="submit" class="btn btn-success btn-lg btn-block">Submit order</button>
+        </div>
+    </div>
+
+    <script src="/js/menu.js"></script>
+
+    {{#if error }}
+        {{#if 1 }}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {{/if}}
+    {{/if}}
+
+    {{#if success }}
+        {{#if 1 }}
+            <div class="alert alert-success" role="alert">
+                {{ success }}
+            </div>
+        {{/if}}
+    {{/if}}
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+    </script>
+</body>
+</html>

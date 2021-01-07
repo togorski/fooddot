@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Menu - Admin</title>
+    
+    <script src="/js/external/jquery-1.12.4.min.js"></script>
+    <script src="/js/external/jquery-ui.min.js"></script>
+    <script src="/js/external/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="/js/external/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+    <script>
+    $( function() {
+        $( ".sortable" ).sortable({
+            containment: "parent",
+            tolerance: "pointer",
+            placeholder: "ui-state-highlight"
+            });
+        $( ".sortable" ).disableSelection();
+        $( "#tabs" ).tabs();
+        $("button").removeClass('ui-sortable-handle');
+    } );
+    </script>
+    
+    <link rel="stylesheet" href="/css/external/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/menu-admin.css">
+</head>
+<body>
+    {{!-- <a href="/menu/new"></a> --}}
+    {{> sidebar-admin page="menu"}}
+    
+    <div id="tabs" class="container">
+
+        <div class="tabs-nav">
+            {{#unless categoriesCount}}
+                <p>No Categories</p>
+            {{/unless}}
+            <ul class="nav-pills sortable">
+
+                {{#each menuItems}}
+                <li class="nav-item" data-categoryid="{{this.categoryId}}" data-show="{{this.show}}">
+                    <a class="nav-link" href="#{{this.categoryId}}"><span class="category-name-link">{{this.categoryName}}</span><span{{#if (not this.show)}} class="icon-hidden"{{/if}}></span></a>
+                </li>
+                {{/each}}
+            </ul>
+            <div class="container-drawer-buttons">
+                <button id="save-item-order-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}}" {{#unless categoriesCount}}disabled{{/unless}}>Save Order</button>    
+                <button id="new-item-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}} invoke-modal-button" data-toggle="modal" data-target="#itemModal" data-action="new" {{#unless categoriesCount}}disabled{{/unless}}>
+                    New Menu Item
+                </button>
+                <button id="save-category-order-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}}" {{#unless categoriesCount}}disabled{{/unless}}>Save Category Order</button>
+                <button id="new-category-button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#categoryModal" data-action="new">New Category</button>
+                <button id="edit-category-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}info{{else}}secondary{{/if}}" data-toggle="modal" data-target="#categoryModal" data-action="edit" {{#unless categoriesCount}}disabled{{/unless}}>Edit Category</button>
+                <button id="delete-category-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}danger{{else}}secondary{{/if}}" data-toggle="modal" data-target="#deleteModal" data-action="delete" data-scope="categories" {{#unless categoriesCount}}disabled{{/unless}}>Delete Category</button>
+            </div>
+            <div class="card info-card">
+                <p>Drag categories and click "Save Category Order" to change categories display order.</p>
+                <p>Drag items and click "Save {Current Category} Order" to change items display order.</p>
+            </div>
+        </div>
+        <div class="container-items">
+        {{#each menuItems}}
+            <div id="{{this.categoryId}}" class="menu-category-grid sortable" data-categoryid="{{this.categoryId}}" >
+                {{#each this.items}}
+                    <div class="menu-item ui-state-default card" data-itemid={{this._id}} data-price={{this.price}} data-available={{this.available}} data-vegan={{this.vegan}} data-vegetarian={{this.vegetarian}} data-glutenFree={{this.glutenFree}}>
+                        <img src="{{this.image}}" class="card-img-top img-fluid">
+                        <div class="price-tag">
+                            <span>{{this.price}} PLN</span>
+                            {{#unless this.available}}
+                                <div class="display-item-available">Out of stock</div>
+                            {{/unless}}
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title display-item-name">{{this.name}}</h5>
+                            <p class="card-text display-item-description">{{this.description}}</p>
+                        </div>
+                        <div class="card-footer">
+                            <div class="item-buttons">
+                                <button class="btn btn-sm btn-info invoke-modal-button" data-toggle="modal" data-target="#itemModal" data-action="edit" data-categoryid="{{this.category}}" data-itemid="{{this._id}}">Edit</button>
+                                <button class="btn btn-sm btn-danger invoke-modal-button" data-toggle="modal" data-target="#deleteModal" data-action="delete" data-scope="items" data-itemname="{{this.name}}" data-itemid="{{this._id}}">Delete</button>
+                            </div>
+                            <div class="items-diet-icons">
+                                {{#if this.glutenFree }}<img src="/img/gf.png" class="diet-icon" data-toggle="tooltip" data-placement="top" title="Gluten-Free">{{/if}}
+                                {{#if this.vegetarian }}<img src="/img/vegetarian.png" class="diet-icon"data-toggle="tooltip" data-placement="top" title="Vegetarian" >{{/if}}
+                                {{#if this.vegan }}<img src="/img/vegan.png" class="diet-icon" data-toggle="tooltip" data-placement="top" title="Vegan">{{/if}}
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        {{/each}}
+        </div>
+
+    </div>
+    <!-- modal form -->
+    <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="item-modal-title-header" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="item-modal-title-header"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/admin/menu" method="POST" enctype="multipart/form-data" autocomplete="off">
+                    <div class="modal-body">
+                        
+                            <div class="form-group">
+                                <label for="item-name-input">Item name</label>
+                                <input class="form-control" id="item-name-input" type="text" placeholder="Item name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description-input">Description</label>
+                                <input class="form-control" id="description-input" type="text" placeholder="Description" name="description">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="category-input">Category</label>
+                                <select class="form-control custom-select" id="category-input" name="category" required>
+                                    {{#each menuItems}}
+                                    <option value="{{this.categoryId}}">{{this.categoryName}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="price-input">Price</label>
+                                <div class="input-group">
+                                    <input id="price-input" class="form-control" type="text" placeholder="Price" name="price" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">PLN</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="diet-checkboxes">Diets</label>
+                                <div class="form-check form-check-inline"> 
+                                    <input id="vegetarian-input" class="form-check-input" type="checkbox" name="vegetarian">    
+                                    <label class="form-check-label" for="vegetarian-input">Vegetarian</label>
+                                </div>
+                                <div class="form-check form-check-inline"> 
+                                    <input id="vegan-input" class="form-check-input" type="checkbox" name="vegan">    
+                                    <label class="form-check-label" for="vegan-input">Vegan</label>
+                                </div>
+                                <div class="form-check form-check-inline"> 
+                                    <input id="glutenFree-input" class="form-check-input" type="checkbox" name="glutenFree">    
+                                    <label class="form-check-label" for="glutenFree-input">Gluten-free</label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputImgeFile">Image</label>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" name="photo" class="custom-file-input" id="inputImageFile" aria-describedby="inputImageFile">
+                                        <label class="custom-file-label" for="inputImageFile">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-check"> 
+                                    <input id="available-input" class="form-check-input" type="checkbox" name="available">    
+                                    <label class="form-check-label" for="available-input">Available</label>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="confirm-modal-title-header" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirm-modal-title-header">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <form action="" method="">
+                        <button type="submit" class="btn btn-success" data-action="confirm">Save changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="category-modal-title-header" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="category-modal-title-header">Create New Category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="/admin/menu/categories" method="POST" autocomplete="off">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="category-name-input">Category</label>
+                            <input id="category-name-input" class="form-control" type="text" placeholder="Category Name" name="name">
+                        </div>
+                        <div class="form-check">
+                            <input id="category-show-input" class="form-check-input" type="checkbox" name="show">    
+                            <label class="form-check-label" for="category-show-input">Show</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success" data-action="confirm">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/menu-admin.js"></script>
+    {{#if error }}
+        {{#if 1 }}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {{/if}}
+    {{/if}}
+
+    {{#if success }}
+        {{#if 1 }}
+            <div class="alert alert-success" role="alert">
+                {{ success }}
+            </div>
+        {{/if}}
+    {{/if}}
+</body>
+</html>

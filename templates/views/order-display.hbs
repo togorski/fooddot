@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Order Display</title>
+    
+    <link rel="stylesheet" href="/css/external/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/order-display.css">
+</head>
+<body>
+
+    <div class="container">
+        {{#unless orders}}
+        <div id="bigMessage">No orders</div> 
+        {{/unless}}
+        <div class="order mark" data-status="Ready" hidden></div>
+        <div class="order mark" data-status="Preparing" hidden></div>
+        <div class="order mark" data-status="Pending" hidden></div>
+
+        {{#each orders}}
+        <div class="order" data-status="{{this.status}}" data-itemid="{{this._id}}">
+            <div class="order-number">{{this.orderNumber}}</div>
+            <div class="order-status">{{this.status}}</div>
+        </div>
+        {{/each}}
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/order-display.js"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Users - Admin</title>
+    
+    <script src="/js/external/jquery-1.12.4.min.js"></script>
+    <script src="/js/external/jquery-ui.min.js"></script>
+    <script src="/js/external/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="/js/external/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+    <link rel="stylesheet" href="/css/external/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/users-admin.css">
+</head>
+<body>
+    {{!-- <a href="/menu/new"></a> --}}
+    {{> sidebar-admin page="users"}}
+
+    <div class="container">
+        <table id="users-table" class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Display Name</th>
+                    <th scope="col">Role</th>
+                    <th scope="col"></th>
+                    <th class="cell-button" scope="col">
+                        <button id="new-user-btn" type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#newUserModal">
+                            New User
+                        </button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each users as |user|}}
+                <tr>
+                    <td>{{user.username}}</td>
+                    <td>{{user.displayName}}</td>
+                    <td>{{user.role}}</td>
+                    <td class="cell-button">
+                        <button type="button" class="btn btn-outline-primary btn-sm edit-user-btn" data-id="{{user.id}}" data-username="{{user.username}}" data-displayname="{{user.displayName}}" data-role="{{user.role}}" data-toggle="modal" data-target="#editUserModal">
+                            Edit
+                        </button>
+                    </td>
+                    <td class="cell-button">
+                        <button type="submit" class="btn btn-outline-danger btn-sm delete-user-btn" data-id="{{user.id}}" data-username="{{user.username}}" data-toggle="modal" data-target="#deleteUserModal">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+
+    </div>
+    <!-- modal form -->
+    <div class="modal fade" id="newUserModal" tabindex="-1" role="dialog" aria-labelledby="new-user-title-header" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="new-user-title-header">New User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                    <div class="modal-body">
+                        <form action="/admin/users/" method="POST" autocomplete="off">
+                            <div class="form-group">
+                                <label for="new-username-input">
+                                    <img src="/img/person.svg" width="32" height="32" title="Username">
+                                    <span>Username</span>
+                                </label>
+                                <input class="form-control" id="new-username-input" type="text" placeholder="Username" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password-input">
+                                    <img src="/img/lock.svg" width="32" height="32" title="Password">
+                                    <span>Password</span>
+                                </label>
+                                <input class="form-control" id="new-password-input" type="password" placeholder="Password" name="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="displayName-input">
+                                <img src="/img/tag.svg" width="32" height="32" title="Display Name">
+                                    <span>Display Name</span>
+                                </label>
+                                <input class="form-control" id="new-displayName-input" type="text" placeholder="Display Name" name="displayName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="role-input">
+                                <img src="/img/gear.svg" width="32" height="32" title="Role">
+                                    <span>Role</span>
+                                </label>
+                                <select class="form-control custom-select" id="new-role-input" name="role" required>
+                                    <option value="admin">admin</option>
+                                    <option value="client">client</option>
+                                    <option value="display">display</option>
+                                    <option value="kitchen">kitchen</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button id="create-user-btn" type="submit" class="btn btn-success">Create</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="edit-user-title-header" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="edit-user-title-header">Edit User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                    <div class="modal-body">
+                        <form id="edit-user-form" action="" method="POST" autocomplete="off">
+                            <div class="form-group">
+                                <label for="edit-username-input">
+                                    <img src="/img/person.svg" width="32" height="32" title="Username">
+                                    <span>Username</span>
+                                </label>
+                                <input class="form-control" id="edit-username-input" type="text" placeholder="Username" name="username" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password-input">
+                                    <img src="/img/lock.svg" width="32" height="32" title="Password">
+                                    <span>Password</span>
+                                </label>
+                                <input class="form-control" id="edit-password-input" type="password" placeholder="Password" name="password">
+                            </div>
+                            <div class="form-group">
+                                <label for="displayName-input">
+                                <img src="/img/tag.svg" width="32" height="32" title="Display Name">
+                                    <span>Display Name</span>
+                                </label>
+                                <input class="form-control" id="edit-displayName-input" type="text" placeholder="Display Name" name="displayName" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="role-input">
+                                <img src="/img/gear.svg" width="32" height="32" title="Role">
+                                    <span>Role</span>
+                                </label>
+                                <select class="form-control custom-select" id="edit-role-input" name="role" required>
+                                    <option value="admin">admin</option>
+                                    <option value="client">client</option>
+                                    <option value="display">display</option>
+                                    <option value="kitchen">kitchen</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button id="submit-edit-user-btn" type="submit" class="btn btn-success">Submit</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="delete-user-modal-title-header" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="delete-user-modal-title-header">Confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete user <span id="deleteUserNameSpan"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <form id="delete-user-form" action="" method="POST">
+                        <button type="submit" class="btn btn-danger" data-action="confirm">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/users-admin.js"></script>
+    {{#if error }}
+        {{#if 1 }}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {{/if}}
+    {{/if}}
+
+    {{#if success }}
+        {{#if 1 }}
+            <div class="alert alert-success" role="alert">
+                {{ success }}
+            </div>
+        {{/if}}
+    {{/if}}
+</body>
+</html>
