@@ -46,18 +46,6 @@ a {
     flex-wrap: wrap;
 }
 
-.sidebar_menu {
-    background: #C33C54;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    max-width: 170px;
-    width: 170px;
-    padding-top: 15px;
-    color: #ffffff;
-}
-
-
 .tabs-nav {
     width: 13.5em;
     text-align: center;
@@ -95,24 +83,6 @@ a {
     border: 1px solid rgba(0,0,0,.125);
 }
 
-.nav-pills .sidebar-nav-link {
-    /* border: 2px solid white; */
-    border-radius: .85rem;
-    margin: 5px;
-    text-align: center;
-    justify-content: center;
-}
-
-.sidebar-nav-link{
-    color: #ffffff;
-    font-weight: 600;
-}
-
-.sidebar-nav-link:hover{
-    background-color: rgba(0,0,0,.15);
-    color: #ffffff;
-}
-
 .nav-pills .nav-link.active {
     background-color: #ffffff;
 }
@@ -120,12 +90,6 @@ a {
 .nav-pills .nav-link.disabled {
     color: #b9b9b9;
 }
-
-.nav-pills .nav-link.sidebar-nav-link.active{
-    color: #C33C54;
-    font-weight: 600;
-}
-
 
 .nav-link .category-name-link {
     align-self: flex-start;
@@ -142,8 +106,16 @@ a {
     background-repeat: no-repeat;
 }
 
-.container-drawer-buttons {
-    margin-top: 3em;
+.actions {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    padding: 0 10px;
+}
+
+.actions__button {
+    margin-bottom: 5px;
 }
 
 .info-card {
@@ -174,7 +146,7 @@ a {
 
 .menu-item {
     display: flex;
-    height: 346px;
+    height: 325px;
     flex-basis: 48%;
     min-width: 300px;
     margin: 10px 6px;
@@ -182,8 +154,8 @@ a {
 
 .card-img-top {
     width: 100%;
-    height: 12vw;
-    min-height: 150px;
+    height: 150px;
+    /* min-height: 150px; */
     object-fit: cover;
 }
 
@@ -208,7 +180,7 @@ a {
 }
 
 .menu-item .display-item-description {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .diet-icon {
@@ -218,26 +190,52 @@ a {
 }
 
 .card-body {
-    height: 143px;
+    flex: none;
+    height: 125px;
     padding: 1rem;
+    word-break: break-all;
 }
 
 .card-footer {
     padding: 5px 10px;
-    height: 46px;
+    height: 50px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
-.item-buttons {
+/* Modal */
+
+.modal-dialog {
+    margin-top: 10px;
+}
+
+.modal-title {
+    line-height: 1;
+}
+
+.modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.modal-header .close {
+    padding-top: 0.5rem;
+}
+
+.modal-footer {
+    border-top: none;
+    padding-top: 0;
+}
+.form-group {
+    font-size: 0.9rem;
+    line-height: 1;
+    margin-bottom: 0.75rem;
+}
+
+
+/* .item-buttons {
     align-self: center;
-}
-
-
-/* @media (min-width: 1200px) {
-    .container {
-        max-width: none;
-    }
 } */
 
 @media (max-width: 900px) {

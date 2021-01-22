@@ -68,6 +68,7 @@ buttonsNewEditItem.forEach((button) => {
                 modal.find('#item-name-input').val("")
                 modal.find('#description-input').val("")
                 modal.find('#category-input').val(itemData.category)
+                modal.find('#price-input').val("")
                 modal.find('#available-input').prop("checked", true)
                 modal.find('#vegan-input').prop("checked", false)
                 modal.find('#vegetarian-input').prop("checked", false)
