@@ -45,12 +45,12 @@ const User = require("./models/user")
 // passport - authorisation
 const passport = require("passport")
 const localStrategy = require("passport-local")
-// const { allowedNodeEnvironmentFlags } = require("process")
+
 app.use(session({
     secret: "kosmos the dog",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 3600000 }
+    cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 h
     })
 )
 app.use(passport.initialize())

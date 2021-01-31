@@ -48,33 +48,31 @@
 
     <div class="container-all">
         <div id="tabs" class="container">
-            <div class="tabs-nav">
+            <div id="toggle" class="toggleCategories">
+                Categories
+                <img class="arrow arrow--rotated" src="/img/arrow-down.svg"/>
+            </div>
+            <div class="tabs-nav categoriesTabs categoriesTabs--hidden">
                 <ul class="nav-pills sortable">
                     {{#unless categoriesCount}}
                         <p>No Categories</p>
                     {{/unless}}
                     {{#each menuItems}}
                         {{#if this.show}}
-                            <li class="nav-item" data-categoryid="{{this.categoryId}}" data-show="{{this.show}}">
+                            <li class="nav-item toggleCategories" data-categoryid="{{this.categoryId}}" data-show="{{this.show}}">
                                 <a class="nav-link" href="#{{this.categoryId}}"><span class="category-name-link">{{this.categoryName}}</span><span{{#if (not this.show)}} class="icon-hidden"{{/if}}></span></a>
                             </li>
                         {{/if}}
                     {{/each}}
                 </ul>
-                <div class="container-drawer-buttons" hidden>
-                    <button id="save-item-order-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}}" {{#unless categoriesCount}}disabled{{/unless}}>Save Order</button>    
-                    <button id="new-item-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}} invoke-modal-button" data-toggle="modal" data-target="#itemModal" data-action="new" {{#unless categoriesCount}}disabled{{/unless}}>
-                        New Menu Item
-                    </button>
-                    <button id="save-category-order-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}success{{else}}secondary{{/if}}" {{#unless categoriesCount}}disabled{{/unless}}>Save Category Order</button>
-                    <button id="new-category-button" class="btn btn-sm btn-outline-success" data-toggle="modal" data-target="#categoryModal" data-action="new">New Category</button>
-                    <button id="edit-category-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}info{{else}}secondary{{/if}}" data-toggle="modal" data-target="#categoryModal" data-action="edit" {{#unless categoriesCount}}disabled{{/unless}}>Edit Category</button>
-                    <button id="delete-category-button" class="btn btn-sm btn-outline-{{#if categoriesCount }}danger{{else}}secondary{{/if}}" data-toggle="modal" data-target="#deleteModal" data-action="delete" data-scope="categories" {{#unless categoriesCount}}disabled{{/unless}}>Delete Category</button>
-                </div>
             </div>
             <div class="container-items">
             {{#each menuItems}}
                 <div id="{{this.categoryId}}" class="menu-category-grid" data-categoryid="{{this.categoryId}}" >
+                    <div class="categoryLabel">{{this.categoryName}}</div>
+                    {{#unless this.itemsCount}}
+                        <p class="noItems">No items</p>
+                    {{/unless}}
                     {{#each this.items}}
                         <div class="menu-item ui-state-default card" data-available={{this.available}} data-itemid={{this._id}} data-price={{this.price}} data-available={{this.available}} data-vegan={{this.vegan}} data-vegetarian={{this.vegetarian}} data-glutenFree={{this.glutenFree}}>
                             <img src="{{this.image}}" class="card-img-top img-fluid">

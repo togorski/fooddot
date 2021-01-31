@@ -1,3 +1,23 @@
+const toggleCategoriesTriggers = document.querySelectorAll(".toggleCategories")
+const categoriesTabs = document.querySelector(".categoriesTabs")
+const toggleArrow = document.querySelector(".arrow")
+
+
+toggleCategoriesTriggers.forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+        toggleCategories()
+        rotateArrow()
+    })
+})
+
+function toggleCategories() {
+    categoriesTabs.classList.toggle("categoriesTabs--hidden")
+}
+
+function rotateArrow() {
+    toggleArrow.classList.toggle("arrow--rotated")
+}
+
 // Initialisation
 const reloadTimeout = 10000
 const newMenuItemButton = document.querySelector("#new-item-button")

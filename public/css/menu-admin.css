@@ -69,6 +69,11 @@ a {
     /* height: 100%; */
 }
 
+div.ui-sortable-placeholder {
+    height: 325px;
+    min-width: 300px;
+}
+
 .ui-state-highlight { 
     height: 2.5em; 
     line-height: 1.2em; 

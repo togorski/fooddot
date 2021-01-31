@@ -1,4 +1,5 @@
 const express = require("express")
+const fs = require("fs")
 const { isAdmin, isLoggedIn } = require("../middleware")
 
 const MenuItem = require("../models/menuItem")
@@ -224,7 +225,7 @@ router.delete("/menu/items/:id", isLoggedIn, isAdmin, async (req, res) => {
             index: { $gt: deletedItem.index}
         })
 
-        for(i=0; i < remainingItems.length; i++){
+        for (i=0; i < remainingItems.length; i++){
             remainingItems[i].index = deletedIndex + i
             await remainingItems[i].save()
         }
@@ -241,26 +242,21 @@ router.put("/menu/items/:id", isLoggedIn, isAdmin, upload.single("photo"), async
     
     const _id = req.params.id
 
-    if (req.file) { itemData.image = imgSubPath + req.file.filename }
-
     req.body.vegan      ? req.body.vegan = true      : req.body.vegan = false
     req.body.vegetarian ? req.body.vegetarian = true : req.body.vegetarian = false
     req.body.glutenFree ? req.body.glutenFree = true : req.body.glutenFree = false
     req.body.available  ? req.body.available = true  : req.body.available = false
 
-    // if (req.body.vegan) { req.body.vegan = true } else { req.body.vegan = false }
-    // if (req.body.vegetarian) { req.body.vegetarian = true } else { req.body.vegetarian = false }
-    // if (req.body.glutenFree) { req.body.glutenFree = true } else { req.body.glutenFree = false }
-    // if (req.body.available) { req.body.available = true } else { req.body.available = false }
-
     req.body.price = parseFloat(req.body.price.replace(",",".")).toFixed(2)
 
     let itemData = req.body
+
+    if (req.file) { itemData.image = imgSubPath + req.file.filename }
+
     delete itemData.id;
 
     try {
-
-        if(req.fileValidationError) {
+        if (req.fileValidationError) {
             throw new Error(req.fileValidationError)
         }
 

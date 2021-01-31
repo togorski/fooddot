@@ -20,11 +20,12 @@ router.get("/", async (req, res) => {
 
             category.show = categories[i].show
 
-            if(category.show){
+            if (category.show){
                 category.items = categories[i].items
                 category.categoryName = categories[i].name
                 category.categoryId = categories[i]._id
-    
+                category.itemsCount = category.items.length
+
                 category.items.sort(compareIndexes)
                 menuItems.push(category)                
             }
