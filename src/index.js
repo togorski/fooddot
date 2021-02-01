@@ -39,6 +39,7 @@ var sidebarTemplate = fs.readFileSync(viewsPath + '/partials/sidebar-admin.hbs',
 Handlebars.registerPartial("sidebar-admin", sidebarTemplate)
 
 // db + models
+require('dotenv').config()
 require("./db/mongoose")
 const User = require("./models/user")
 
