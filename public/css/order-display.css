@@ -20,6 +20,21 @@ body {
     top: 40%;
 }
 
+.logout {
+    background-color: #ffffff;
+    border: 1px solid #c2c2c2;
+    border-top: 0;
+    border-right: 0;
+    border-bottom-left-radius: .25rem;
+    color: #000;
+    font-size: small;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px 10px;
+    z-index: 99999;
+}
+
 .order {
     border-radius: 10px;
     background: white;

@@ -1,10 +1,12 @@
 const express = require("express")
 const router = new express.Router()
 
+const { isLoggedIn, isKitchen } = require("../middleware")
+
 const moment = require("moment")
 const Order = require("../models/order")
 
-router.get("/", async (req, res) => {
+router.get("/", isLoggedIn, isKitchen, async (req, res) => {
     try {
         let readyOrders = []
         let preparingOrders = []

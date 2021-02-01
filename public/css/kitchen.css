@@ -35,6 +35,21 @@ a {
     display: none;
 }
 
+.logout {
+    background-color: #ffffff;
+    border: 1px solid #c2c2c2;
+    border-top: 0;
+    border-right: 0;
+    border-bottom-left-radius: .25rem;
+    color: #000;
+    font-size: small;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px 10px;
+    z-index: 99999;
+}
+
 /* food menu */
 .container {
     width: 100%;
@@ -72,7 +87,6 @@ a {
 .nav-pills .nav-link:hover {
     transform: translateY(-2px);
 }
-
 
 .container-drawer-buttons {
     margin-top: 3em;

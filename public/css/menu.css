@@ -32,6 +32,21 @@ a {
     display: none;
 }
 
+.logout {
+    background-color: #ffffff;
+    border: 1px solid #c2c2c2;
+    border-top: 0;
+    border-right: 0;
+    border-bottom-left-radius: .25rem;
+    color: #000;
+    font-size: small;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px 10px;
+    z-index: 99999;
+}
+
 .sidebar_right {
     display: flex;
     flex-direction: column;
@@ -166,23 +181,29 @@ a {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-content: flex-start;
 }
 
 .menu-item {
     display: flex;
-    height: 346px;
+    /* min-height: 150px; */
+    flex-grow: 1;
+    height: 260px;
     /* flex-basis: 48%; */
     flex-basis: 47%;
-    min-width: 200px;
+    min-width: 220px;
     /* max-width: 300px; */
     margin: 10px 6px;
 }
 
 .card-img-top {
+    background-position: 0 30%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: auto;
+    /* flex-grow: 2; */
+    min-height: 105px;
     width: 100%;
-    height: 12vw;
-    min-height: 150px;
-    object-fit: cover;
 }
 
 .price-tag {
@@ -210,25 +231,33 @@ a {
 }
 
 .diet-icon {
-    width: 2rem;
-    height: 2rem;
+    width: 1.7rem;
+    height: 1.7rem;
     margin: 0 5px;
 }
 
 .card-body {
-    height: 143px;
-    padding: 1rem;
+    /* height: 45%; */
+    min-height: 80px;
+    max-height: 120px;
+    padding: 0.75rem;
+    /* word-break: break-all; */
+    word-wrap: break-word;
 }
 
 .card-footer {
-    padding: 5px 10px;
-    height: 46px;
+    align-items: center;
+    padding: 5px 5px;
+    /* height: 20%; */
+    height: 36px;
     display: flex;
     justify-content: space-between;
 }
 
 .add-to-order {
-    padding-top: 0.15rem;
+    /* height: 90%; */
+    padding: 0.1rem 0.5rem;
+    padding-top: 0;
 }
 
 .item-buttons {
@@ -318,6 +347,7 @@ a {
 }
 
 .noItems {
+    margin-top: 1rem;
     text-align: center;
     width: 100%;
 }
@@ -375,19 +405,16 @@ a {
     .container {
         min-width: 200px;
         flex-direction: column;
-        /* justify-content: flex-start; */
-        /* align-items: stretch; */
     }
-
-    /* .tabs-nav {
-        width: 100%;
-        margin-right: 0;
-    } */
 }
 
 
 @media (min-width: 1200px) {
     .container {
         max-width: none;
+    }
+
+    .menu-item {
+        width: 100%;
     }
 }

@@ -3,13 +3,13 @@ const router = new express.Router()
 
 const Order = require("../models/order")
 
-const middleware = require("../middleware")
+const { isLoggedIn, isDisplay } = require("../middleware")
 
 const statusOrder = ["Ready", "Preparing", "Pending"]
 
 const sortOrders = (a, b) => {return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status)}
 
-router.get("/", middleware.isLoggedIn, middleware.isDisplay, async (req, res) => {
+router.get("/", isLoggedIn, isDisplay, async (req, res) => {
     
     try {
         const orders = await Order.find({ status: {$in: ["Ready", "Preparing", "Pending"]}}, "_id orderNumber status")

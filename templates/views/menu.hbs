@@ -25,12 +25,6 @@
     <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                {{!-- <div class="modal-header">
-                    <h5 class="modal-title" id="item-modal-title-header">Your order number is</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div> --}}
                 <div class="modal-body">
                     Your order number is
                     <div class="order-number"></div>
@@ -75,7 +69,8 @@
                     {{/unless}}
                     {{#each this.items}}
                         <div class="menu-item ui-state-default card" data-available={{this.available}} data-itemid={{this._id}} data-price={{this.price}} data-available={{this.available}} data-vegan={{this.vegan}} data-vegetarian={{this.vegetarian}} data-glutenFree={{this.glutenFree}}>
-                            <img src="{{this.image}}" class="card-img-top img-fluid">
+                            {{!-- <img src="{{this.image}}" class="card-img-top img-fluid"> --}}
+                            <div class="card-img-top" style="background-image: url('{{this.image}}')"></div>
                             <div class="price-tag">
                                 <span>{{this.price}} PLN</span>
                                 <div class="display-item-available"></div>
@@ -99,6 +94,7 @@
             </div>
         </div>
         <div class="sidebar_right">
+            <a href="/logout" class="logout">Logout</a>
             <h1>Order:</h1>
             <div id="order-list-area"></div>
             <div id="total-price-area">

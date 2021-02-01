@@ -1,11 +1,12 @@
 const express = require("express")
 const router = new express.Router()
 
+const { isLoggedIn, isClient } = require("../middleware")
 const { compareIndexes } = require("../utils")
 
 const MenuCategory = require("../models/menuCategory")
 
-router.get("/", async (req, res) => {
+router.get("/", isLoggedIn, isClient, async (req, res) => {
     let menuItems = []
 
     try {
