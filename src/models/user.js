@@ -46,10 +46,17 @@ userSchema.pre("findOneAndDelete", async function(next) {
     // user is not an admin, so nevermind
     if(!foundUser) {
         return next()
+    } else {
+        if(foundUser.username === "admin") {
+            const err = new Error("Can't delete user 'admin'")
+            return next(err)
+        }
     }
 
+    // below protection is now unnecesary as I had to make a protection
+    // not to delete user admin :)
     if(adminUsers.length <= 1) {
-        var err = new Error("Can't delete - at least 1 admin account needed")
+        const err = new Error("Can't delete - at least 1 admin account needed")
         return next(err)
     }
 
