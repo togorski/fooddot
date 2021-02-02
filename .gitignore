@@ -1,3 +1,6 @@
 node_modules/
 public/img/menu/*
 .env
+
+#exception
+!public/img/menu/.gitkeep
