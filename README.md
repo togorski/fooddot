@@ -24,10 +24,10 @@ Some of the lessons learned:
 To do:
 - implement input sanitization
 - add more protection on inputs
-implement autologout on front (if needed)
-responsive design (more effort spent only on client/order menu)
-use css grid for client menu items
-css files cleanup/split
-add default image for menu when there is no image
-host menu images in cloud or use different databases for local and heroku
-hide and protected logout for display and client.
+- implement autologout on front (if needed)
+- responsive design (more effort spent only on client/order menu)
+- use css grid for client menu items
+- css files cleanup/split
+- add default image for menu when there is no image
+- host menu images in cloud or use different databases for local and heroku
+- hide and protected logout for display and client.
