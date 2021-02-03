@@ -5,15 +5,15 @@ Node/Mongo/Express/Handlebars/Socket.io
 Demo - https://fooddot.herokuapp.com/ login: tester password: tester
 
 Panels:
-Admin - Menu: Allows to manage menu items and categories, make them visible/hidden, change display order by dragging and dropping.
+Admin - Menu: Allows to manage menu items and categories, make them visible/hidden, change display order by dragging and dropping. Access type - admin.
 
-Admin - Users: Manage users and assign user roles.
+Admin - Users: Manage users and assign user roles. Access type - admin.
 
-Client: Menu where client can order menu items and receives order number.
+Client: Menu where client can order menu items and receives order number. Access type: admin, client.
 
-Display: Live display of current orders.
+Display: Live display of current orders. Access type - admin, display.
 
-Kitchen: Panel for the kitchen stuff where order details are displayed and its status can be changed.
+Kitchen: Panel for the kitchen stuff where order details are displayed and its status can be changed. Access type - admin, kitchen.
 
 Some of the lessons learned:
 - CSS - stick to BEM from the beginning
