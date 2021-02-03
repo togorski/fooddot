@@ -22,8 +22,8 @@ Some of the lessons learned:
 - split files (mainly js, css and views) when possible and it makes sense, from the beginning
 
 To do:
-implement input sanitization
-add more protection on inputs
+- implement input sanitization
+- add more protection on inputs
 implement autologout on front (if needed)
 responsive design (more effort spent only on client/order menu)
 use css grid for client menu items
