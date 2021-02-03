@@ -15,22 +15,26 @@ const imgSubPath = "/img/menu/"
 const multer = require("multer")
 
 // Set multer storage
+const {format} = require('util')
+const { Storage } = require("@google-cloud/storage")
 
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(publicPath + imgSubPath))
-    },
-    filename: function (req, file, cb) {
-        let extArray = file.mimetype.split("/")
-        let extension = extArray[extArray.length - 1]
-        cb(null, file.fieldname + '-' + Date.now() + "." + extension)
+// Create new storage instance with Firebase project credentials
+const storage = new Storage({
+    projectId: process.env.GCLOUD_PROJECT_ID,
+    credentials: {
+        client_email: process.env.GCLOUD_CLIENT_EMAIL,
+        private_key: process.env.GCLOUD_PRIVATE_KEY.replace(/\\n/g, '\n')
     }
-  })
+})
 
-const upload = multer({ 
-    storage,
+// Create a bucket associated to Firebase storage bucket
+const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET_URL)
+
+// Initiating a memory storage engine to store files as Buffer objects
+const upload = multer({
+    storage: multer.memoryStorage(),
     limits: {
-        fileSize: 1000000
+      fileSize: 5 * 1024 * 1024 // files no larger than 5mb
     },
     fileFilter(req, file, cb) {
         if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
@@ -40,6 +44,64 @@ const upload = multer({
         return cb(undefined, true)
     }
 })
+
+// Commented lines below are for disk/server storage
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, path.join(publicPath + imgSubPath))
+//     },
+//     filename: function (req, file, cb) {
+//         let extArray = file.mimetype.split("/")
+//         let extension = extArray[extArray.length - 1]
+//         cb(null, file.fieldname + '-' + Date.now() + "." + extension)
+//     }
+//   })
+
+// const upload = multer({ 
+//     storage,
+//     limits: {
+//         fileSize: 5 * 1024 * 1024 // under 5 mb
+//     },
+//     fileFilter(req, file, cb) {
+//         if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+//             req.fileValidationError = "Image format not accepted"
+//             return cb(undefined, false, new Error("Image format not accepted"))
+//         }
+//         return cb(undefined, true)
+//     }
+// })
+
+const uploadImageToStorage = (file) => {
+    return new Promise((resolve, reject) => {
+        console.log(file)
+        if (!file) {
+            reject('No image file');
+        }
+        let newFileName = `${Date.now()}_${file.originalname}`
+        
+        // Create new blob in the bucket referencing the file
+        let fileUpload = bucket.file(newFileName)
+
+        // Create writable stream and specifying file mimetype
+        const blobStream = fileUpload.createWriteStream({
+            metadata: {
+                contentType: file.mimetype
+            }
+        })
+
+        blobStream.on('error', (error) => {
+            reject('Something is wrong! Unable to upload at the moment.' + error)
+        })
+
+        blobStream.on('finish', () => {
+        // The public URL can be used to directly access the file via HTTP.
+        const url = format(`https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`)
+            resolve(url);
+        })
+
+        blobStream.end(file.buffer)
+    })
+}
 
 const router = new express.Router()
 
@@ -160,11 +222,15 @@ router.post("/menu/items", isLoggedIn, isAdmin, upload.single("photo"), async (r
     
     let itemData = new MenuItem({ ...req.body })
 
-    if (req.file) { itemData.image = imgSubPath + req.file.filename }
-    
+    // below 'if' is for disk storage
+    // if (req.file) { itemData.image = imgSubPath + req.file.filename }
+
     try {
-        if(req.fileValidationError) {
-            throw new Error(req.fileValidationError)
+        if (req.file) {
+            if (req.fileValidationError) {
+                throw new Error(req.fileValidationError)
+            }
+            itemData.image = await uploadImageToStorage(req.file)
         }
 
         await MenuCategory.updateOne(
@@ -175,6 +241,75 @@ router.post("/menu/items", isLoggedIn, isAdmin, upload.single("photo"), async (r
         req.flash("success", "Item " + itemData.name + " created successfully")
     } catch (e) {
         req.flash("error", "Failed to create item " + itemData.name + ". " + e.message)
+    }
+
+    res.redirect("/admin/menu")
+})
+
+router.put("/menu/items/:id", isLoggedIn, isAdmin, upload.single("photo"), async (req, res) => {
+    // can be optimized to updated as patch, only keys that were changed
+    
+    const _id = req.params.id
+
+    req.body.vegan      ? req.body.vegan = true      : req.body.vegan = false
+    req.body.vegetarian ? req.body.vegetarian = true : req.body.vegetarian = false
+    req.body.glutenFree ? req.body.glutenFree = true : req.body.glutenFree = false
+    req.body.available  ? req.body.available = true  : req.body.available = false
+
+    req.body.price = parseFloat(req.body.price.replace(",",".")).toFixed(2)
+
+    let itemData = req.body
+
+    // uncomment for disk storage
+    // if (req.file) { itemData.image = imgSubPath + req.file.filename }
+
+    delete itemData.id;
+
+    try {
+        if (req.file) {
+            if (req.fileValidationError) {
+                throw new Error(req.fileValidationError)
+            }
+            itemData.image = await uploadImageToStorage(req.file)
+        }
+
+        const editedItem = await MenuItem.findById({_id})
+        if (editedItem.category != itemData.category) {
+            const remainingItems = await MenuItem.find({
+                category: editedItem.category,
+                index: { $gt: editedItem.index}
+            })
+
+            for(i=0; i < remainingItems.length; i++){
+                remainingItems[i].index = editedItem.index + i
+                await remainingItems[i].save()
+            }
+
+            const newIndex = await MenuItem.countDocuments({category: itemData.category})
+            itemData.index = newIndex
+        }
+
+        await MenuItem.updateOne({ _id }, { $set: {
+            ...itemData
+        }}, { runValidators: true })
+        await MenuItem.updateOne({ _id }, { $set: {
+            ...itemData
+        }}, { runValidators: true })
+        // remove old image - below works for disk storage
+        // if (req.file){
+        //     try {
+        //         fs.unlinkSync(publicPath + editedItem.image)
+        //         //file removed
+        //     } catch(err) {
+        //         //what else can be a handling here?
+        //         console.error(err)
+        //     }
+        // }
+        
+        req.flash("success", "Item " + itemData.name + " edited successfully")
+    } catch (e) {
+        req.flash("error", "Failed to edit item " + itemData.name + ". " + e.message)
+        console.log(e.message)
     }
 
     res.redirect("/admin/menu")
@@ -232,71 +367,6 @@ router.delete("/menu/items/:id", isLoggedIn, isAdmin, async (req, res) => {
         req.flash("success", "Item " + deletedItem.name + " deleted successfully")
     } catch (e) {
         req.flash("error", "Failed to delete item " + deletedItem.name + ". " + e.message)
-    }
-
-    res.redirect("/admin/menu")
-})
-
-router.put("/menu/items/:id", isLoggedIn, isAdmin, upload.single("photo"), async (req, res) => {
-    // can be optimized to updated as patch, only keys that were changed
-    
-    const _id = req.params.id
-
-    req.body.vegan      ? req.body.vegan = true      : req.body.vegan = false
-    req.body.vegetarian ? req.body.vegetarian = true : req.body.vegetarian = false
-    req.body.glutenFree ? req.body.glutenFree = true : req.body.glutenFree = false
-    req.body.available  ? req.body.available = true  : req.body.available = false
-
-    req.body.price = parseFloat(req.body.price.replace(",",".")).toFixed(2)
-
-    let itemData = req.body
-
-    if (req.file) { itemData.image = imgSubPath + req.file.filename }
-
-    delete itemData.id;
-
-    try {
-        if (req.fileValidationError) {
-            throw new Error(req.fileValidationError)
-        }
-
-        const editedItem = await MenuItem.findById({_id})
-        if (editedItem.category != itemData.category) {
-            const remainingItems = await MenuItem.find({
-                category: editedItem.category,
-                index: { $gt: editedItem.index}
-            })
-
-            for(i=0; i < remainingItems.length; i++){
-                remainingItems[i].index = editedItem.index + i
-                await remainingItems[i].save()
-            }
-
-            const newIndex = await MenuItem.countDocuments({category: itemData.category})
-            itemData.index = newIndex
-        }
-
-        await MenuItem.updateOne({ _id }, { $set: {
-            ...itemData
-        }}, { runValidators: true })
-        await MenuItem.updateOne({ _id }, { $set: {
-            ...itemData
-        }}, { runValidators: true })
-        // remove old image
-        if (req.file){
-            try {
-                fs.unlinkSync(publicPath + editedItem.image)
-                //file removed
-            } catch(err) {
-                //what else can be a handling here?
-                console.error(err)
-            }
-        }
-        
-        req.flash("success", "Item " + itemData.name + " edited successfully")
-    } catch (e) {
-        req.flash("error", "Failed to edit item " + itemData.name + ". " + e.message)
-        console.log(e.message)
     }
 
     res.redirect("/admin/menu")
