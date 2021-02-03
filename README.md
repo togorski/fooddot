@@ -6,13 +6,9 @@ Demo - https://fooddot.herokuapp.com/ login: tester password: tester
 
 Panels:
 Admin - Menu: Allows to manage menu items and categories, make them visible/hidden, change display order by dragging and dropping.
-
 Admin - Users: Manage users and assign user roles.
-
 Client: Menu where client can order menu items and receives order number.
-
 Display: Live display of current orders.
-
 Kitchen: Panel for the kitchen stuff where order details are displayed and its status can be changed.
 
 Some of the lessons learned:
